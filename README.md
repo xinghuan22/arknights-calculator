@@ -1,2 +1,3 @@
 # arknights-calculator
-骑士杯计算器
+
+集成战略计算器
