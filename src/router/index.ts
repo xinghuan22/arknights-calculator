@@ -5,8 +5,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'mizuki-cal',
-      component: () => import('../views/MizukiCalView.vue')
+      name: 'sami-cal',
+      component: () => import('../views/SamiCalView.vue')
     }
   ]
 })
