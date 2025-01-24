@@ -8,6 +8,10 @@
         <el-button class="info" plain @click="useinfo">使用说明</el-button>
         <el-button class="info" plain @click="digit_info">分数性规则</el-button>
         <el-button class="info" plain @click="limit_info">限制性规则</el-button>
+        <div class="reset">
+          <el-text class="mx-1 score" size="large">最终得分: {{ totalScore * base }}</el-text>
+          <el-button class="reset-button" type="primary" @click="limit_info">重置</el-button>
+        </div>
       </div>
       <el-scrollbar height="60vh" class="item-box">
         <!-- <p v-for="item in 20" :key="item" class="scrollbar-demo-item">{{ item }}</p> -->
@@ -23,11 +27,47 @@
           >
             <div class="dimension">
               <el-cascader
-                v-model="value"
+                v-model="calDimension.value"
+                :key="calDimension.id"
                 :options="behaviors"
                 :props="props"
                 @change="handleChange(index, $event)"
-              />
+              >
+                <template #default="{ node, data }">
+                  <span>{{ data.label }}</span>
+                  <span v-if="node.isLeaf && !isNaN(data.value)">
+                    (
+                    <span v-if="data.value > 0">+</span>
+                    {{ toPercent(data.value) }})
+                  </span>
+                </template>
+              </el-cascader>
+              <div class="special-cadres" :style="{ visibility: calDimension.boss_fight ? 'visible' : 'hidden' }">
+                <el-text
+                  class="mx-1"
+                  size="large"
+                  style="flex: 1; text-align: right; margin-right: 1%"
+                  >携带干员</el-text
+                >
+                <el-select
+                  v-model="special_cadres_Value"
+                  collapse-tags
+                  collapse-tags-tooltip
+                  multiple
+                  placeholder="Select"
+                  style="flex: 2"
+                >
+                  <el-option
+                    v-for="item in special_cadres"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+                <el-text class="mx-1" size="large" style="flex: 1; margin-left: 1%"
+                  >进行boss战</el-text
+                >
+              </div>
               <div class="option">
                 <el-button type="primary" circle @click="addDimension(index)">
                   <el-icon><Plus /></el-icon>
@@ -134,10 +174,10 @@
     display: flex;
     flex-direction: row;
     .el-cascader {
-      flex: 8;
+      flex: 6;
     }
     .option {
-      flex: 2;
+      flex: 1;
       text-align: right;
     }
     margin-top: 3px;
@@ -202,30 +242,47 @@
   position: absolute;
 }
 
-.reset {
-  margin-left: auto;
-  margin-right: 5px;
-  margin-top: auto;
-  margin-bottom: 5px;
-  width: 20%;
-  height: 10%;
-  .el-button {
-    width: 100%;
-    height: 100%;
-  }
+.result {
+  margin-left: 1%;
+  padding: 10px 0;
+  height: auto;
+  display: flex;
+  flex-direction: row;
 }
 
 .info {
   margin-left: auto;
   margin-right: 5px;
   margin-top: auto;
-  margin-bottom: 5px;
+  flex: 1;
   width: 10%;
   height: 10%;
   .el-button {
-    width: 100%;
+    width: 70%;
     height: 100%;
   }
+}
+
+.reset {
+  margin-right: 1%;
+  width: 30%;
+  flex: 5;
+  text-align: right;
+}
+
+.reset-button {
+  width: 15%;
+  height: 100%;
+}
+
+.special-cadres {
+  flex: 3;
+  display: flex;
+  flex-direction: row;
+}
+
+.score {
+  margin-right: 20%;
 }
 
 .option {
@@ -241,7 +298,11 @@ import {
   handleChange,
   calDimensions,
   addDimension,
-  rmDimension
+  rmDimension,
+  totalScore,
+  special_cadres,
+  special_cadres_Value,
+  base
 } from '../scripts/samical'
 
 import { ElMessageBox } from 'element-plus'
@@ -272,6 +333,15 @@ const info = (msg: string, title: string) => {
       'max-width': '40%'
     }
   })
+}
+
+function toPercent(point: number) {
+  if (point > 1) {
+    return point
+  }
+  var str = Number(point * 100).toFixed()
+  str += '%'
+  return str
 }
 
 const digit_rule = `1. 每位选手开局拥有100分初始分数

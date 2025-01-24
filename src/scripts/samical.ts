@@ -1,26 +1,87 @@
 import { ref } from 'vue'
-export { behaviors, special_cadres, calDimensions }
+export { behaviors, special_cadres, calDimensions, totalScore, special_cadres_Value, base}
 export { addDimension, rmDimension, handleChange }
 
 // 总分
-const totalScore = 100
+const totalScore = ref(100)
 // 全局倍率
-const base = 1
+let base = 1
 // 是否通过第三层
-const third = false
+let third = false
+// special_cadres
+const special_cadres_Value = ref([])
 
 const calDimensions = ref([
   {
     score: 100,
     behavior: '',
-    id: Math.random().toString(36).slice(-8)
+    id: Math.random().toString(36).slice(-8),
+    // 是否boss战
+    boss_fight: false,
+    value: []
   }
 ])
 
 
 // 事件选择时计算分数
-const handleChange = (index: number, value: []) => {
-  console.log(value)
+const handleChange = (index: number, value: never[]) => {
+  let last_score = 100
+  if (index > 0) {
+    last_score = calDimensions.value[index - 1].score
+  }
+  for (let i = index; i < calDimensions.value.length; i++) {
+    const dimension = calDimensions.value[i]
+    dimension.score = last_score
+    value = dimension.value
+    const v = value[value.length - 1]
+    dimension.behavior = v
+    if (value[value.length - 2] == 'boss_three') {
+      dimension.boss_fight = true
+      dimension.score += 100
+      dimension.score *= 1 + v
+      third = true
+    } else if (value[value.length - 2] == 'boss_final') {
+      dimension.boss_fight = true
+      dimension.score += Math.trunc(v)
+      dimension.score *= v - Math.trunc(v)
+    } else if (value[value.length - 2] == 'error_patch') {
+      if (v == 'ban') {
+        base = 0.7
+      } 
+      if (v == 'limit_one') {
+        if (third) {
+          dimension.score *= 1-0.3
+        } else {
+          dimension.score -= 80
+        }
+      }
+      if (v == 'limit_two') {
+        if (third) {
+          dimension.score *= 1-0.25
+        } else {
+          dimension.score -= 60
+        }
+      }
+      if (v == 'limit_three') {
+        if (third) {
+          dimension.score *= 1-0.2
+        } else {
+          dimension.score -= 40
+        }
+      }
+    } else {
+      // 计算分数
+      if (v < 1) {
+        dimension.score *= (v + 1)
+      } else if (v > 1) {
+        dimension.score += v
+      }
+    }
+    calDimensions.value[i] = dimension
+    last_score = dimension.score
+    console.log(dimension, v)
+  }
+  totalScore.value = last_score*base
 }
 
 const addDimension = (index: number) => {
@@ -33,7 +94,9 @@ const addDimension = (index: number) => {
   const last = {
     score: s,
     behavior: '',
-    id: Math.random().toString(36).slice(-8)
+    id: Math.random().toString(36).slice(-8),
+    boss_fight: false,
+    value: []
   }
   // 在下一个位置插入
   calDimensions.value.splice(index + 1, 0, last)
@@ -69,16 +132,16 @@ const patch_cadres = [
         label: 'Ban位干员（最后结算*0.7）',
       },
       {
-        value: 0,
-        label: '限一干员',
+        value: 'limit_one',
+        label: '限一干员（三层前分数计算-80，第三层开始分数计算-30%）',
       },
       {
-        value: 0,
-        label: '限二干员',
+        value: 'limit_two',
+        label: '限二干员（三层前分数计算-60，第三层开始分数计算-25%）',
       },
       {
-        value: 0,
-        label: '限三干员',
+        value: 'limit_three',
+        label: '限三干员（三层前分数计算-40，第三层开始分数计算-20%）',
       }
     ]
   },
