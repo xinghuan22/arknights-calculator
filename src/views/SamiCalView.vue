@@ -10,7 +10,7 @@
         <el-button class="info" plain @click="limit_info">限制性规则</el-button>
         <div class="reset">
           <el-text class="mx-1 score" size="large">最终得分: {{ totalScore * base }}</el-text>
-          <el-button class="reset-button" type="primary" @click="limit_info">重置</el-button>
+          <el-button class="reset-button" type="primary" @click="reset">重置</el-button>
         </div>
       </div>
       <el-scrollbar height="60vh" class="item-box">
@@ -31,7 +31,7 @@
                 :key="calDimension.id"
                 :options="behaviors"
                 :props="props"
-                @change="handleChange(index, $event)"
+                @change="handleChange(index)"
               >
                 <template #default="{ node, data }">
                   <span>{{ data.label }}</span>
@@ -50,12 +50,13 @@
                   >携带干员</el-text
                 >
                 <el-select
-                  v-model="special_cadres_Value"
+                  v-model="calDimension.special_cadres_Value"
                   collapse-tags
                   collapse-tags-tooltip
                   multiple
                   placeholder="Select"
                   style="flex: 2"
+                  @change="special_cadre_change(index)"
                 >
                   <el-option
                     v-for="item in special_cadres"
@@ -301,8 +302,9 @@ import {
   rmDimension,
   totalScore,
   special_cadres,
-  special_cadres_Value,
-  base
+  base,
+  reset,
+  special_cadre_change
 } from '../scripts/samical'
 
 import { ElMessageBox } from 'element-plus'
