@@ -42,18 +42,12 @@ const calscore = (index: number) => {
     const v = value[value.length - 1]
     dimension.behavior = v
     if (value[value.length - 2] == 'boss_three') {
-      dimension.boss_fight = true
-      // 特殊作战加成 先于boss结算
-      dimension.score += dimension.special_cadres_Value.length * 150
       dimension.score += 100
       dimension.score *= 1 + v
       third = true
     } else if (value[value.length - 2] == 'boss_final') {
-      dimension.boss_fight = true
-      // 特殊作战加成 先于boss结算
-      dimension.score += dimension.special_cadres_Value.length * 150
       dimension.score += Math.trunc(v)
-      dimension.score *= v - Math.trunc(v)
+      dimension.score *= v - Math.trunc(v)+1
     } else if (value[value.length - 2] == 'error_patch') {
       if (v == 'ban') {
         base.value = 0.7
@@ -79,6 +73,9 @@ const calscore = (index: number) => {
           dimension.score -= 40
         }
       }
+    } else if ( v == 'special_cadres') {
+      dimension.boss_fight = true
+      dimension.score += dimension.special_cadres_Value.length*150
     } else {
       // 计算分数
       if (v < 1) {
@@ -127,24 +124,26 @@ const reset = () => {
       special_cadres_Value: []
     }
   ]
+  totalScore.value = 100
+  base.value = 1
 }
 
 const patch_cadres = [
   {
     value: 40,
-    label: '6星干员'
+    label: '6星干员（+40）'
   },
   {
     value: 25,
-    label: '5星干员'
+    label: '5星干员（+25）'
   },
   {
     value: 15,
-    label: '4星及以下干员'
+    label: '4星及以下干员（+15）'
   },
   {
     value: 10,
-    label: '临时招募'
+    label: '临时招募（+10）'
   },
   {
     value: 'error_patch',
@@ -172,67 +171,67 @@ const patch_cadres = [
 const update_cadres = [
   {
     value: 20,
-    label: '6星干员'
+    label: '6星干员（+20）'
   },
   {
     value: 15,
-    label: '5星干员'
+    label: '5星干员（+15）'
   },
   {
     value: 10,
-    label: '4星及以下干员'
+    label: '4星及以下干员（+10）'
   },
   {
     value: 10,
-    label: '临时招募'
+    label: '临时招募（+10）'
   }
 ]
 const patch_collections = [
   {
     value: 30,
-    label: '普通藏品'
+    label: '普通藏品（+30）'
   },
   {
     value: 40,
-    label: '**之手'
+    label: '**之手（+40）'
   },
   {
     value: 50,
-    label: '书本、安玛的爱'
+    label: '书本、安玛的爱（+50）'
   },
   {
     value: 0.25,
-    label: '无垠赠礼'
+    label: '无垠赠礼（+25%）'
   },
   {
     value: 0.35,
-    label: '空间碎片、深度灼痕、坍缩之种'
+    label: '空间碎片、深度灼痕、坍缩之种（+35%）'
   },
   {
     value: -0.05,
-    label: '源石鸢尾花、古旧铸物、女妖之吻、宁静泉流、高卢银行支票、荆棘环'
+    label: '源石鸢尾花、古旧铸物、女妖之吻、宁静泉流、高卢银行支票、荆棘环（-5%)'
   },
   {
     value: -0.1,
-    label: '第二经济改革法、"复仇者"、损坏的左轮弹巢、岩角号、银餐叉'
+    label: '第二经济改革法、"复仇者"、损坏的左轮弹巢、岩角号、银餐叉（-10%)'
   },
   {
     value: -0.15,
-    label: '空羽兽、立体艺术装置、迷迭香之拥、金酒之杯'
+    label: '空羽兽、立体艺术装置、迷迭香之拥、金酒之杯（-15%)'
   },
   {
     value: -0.25,
-    label: '大静谧、老蒲扇'
+    label: '大静谧、老蒲扇（-25%)'
   },
   {
     value: 400,
-    label: '凑齐三件国王系列藏品'
+    label: '凑齐三件国王系列藏品（+400）'
   }
 ]
 const fights = [
   {
     value: 20,
-    label: '普通作战'
+    label: '普通作战（+20）'
   },
   {
     value: 'event_fight',
@@ -258,11 +257,11 @@ const fights = [
   },
   {
     value: 50,
-    label: '突袭作战'
+    label: '突袭作战（+50）'
   },
   {
     value: 0.2,
-    label: '高难度突袭作战'
+    label: '高难度突袭作战（+20%）'
   },
   {
     value: 'boss_three',
@@ -270,23 +269,23 @@ const fights = [
     children: [
       {
         value: 0.5,
-        label: '自然之怒'
+        label: '自然之怒（+100，+50%）'
       },
       {
         value: 0.6,
-        label: '利刃所指、新部族'
+        label: '利刃所指、新部族（+100，+60%）'
       },
       {
         value: 0.7,
-        label: '呼吸'
+        label: '呼吸（+100，+70%）'
       },
       {
         value: 0.75,
-        label: '大地醒转'
+        label: '大地醒转（+100，+75%）'
       },
       {
         value: 0.8,
-        label: '夺树者'
+        label: '夺树者（+100，+80%）'
       }
     ]
   },
@@ -296,21 +295,25 @@ const fights = [
     children: [
       {
         value: 200.2,
-        label: '巍峨银凇'
+        label: '巍峨银凇（+200，+20%）'
       },
       {
         value: 180.3,
-        label: '萨米之熵'
+        label: '萨米之熵（+180，+30%）'
       },
       {
         value: 160.4,
-        label: '园丁'
+        label: '园丁（+160，+40%）'
       },
       {
         value: 140.5,
-        label: '时光之沙'
+        label: '时光之沙（+140，+50%）'
       }
     ]
+  },
+  {
+    value: 'special_cadres',
+    label: '携带特殊干员进行boss战（每个特殊干员+150）',
   }
 ]
 const special_cadres = ['弑君者', '止颂', '伺夜', '琳琅诗怀雅', '淬羽赫默']

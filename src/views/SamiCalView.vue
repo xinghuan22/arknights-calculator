@@ -9,7 +9,9 @@
         <el-button class="info" plain @click="digit_info">分数性规则</el-button>
         <el-button class="info" plain @click="limit_info">限制性规则</el-button>
         <div class="reset">
-          <el-text class="mx-1 score" size="large">最终得分: {{ totalScore * base }}</el-text>
+          <el-text class="mx-1 score" size="large"
+            >最终得分: {{ (totalScore * base).toFixed(2) }}</el-text
+          >
           <el-button class="reset-button" type="primary" @click="reset">重置</el-button>
         </div>
       </div>
@@ -32,17 +34,11 @@
                 :options="behaviors"
                 :props="props"
                 @change="handleChange(index)"
+              />
+              <div
+                class="special-cadres"
+                :style="{ visibility: calDimension.boss_fight ? 'visible' : 'hidden' }"
               >
-                <template #default="{ node, data }">
-                  <span>{{ data.label }}</span>
-                  <span v-if="node.isLeaf && !isNaN(data.value)">
-                    (
-                    <span v-if="data.value > 0">+</span>
-                    {{ toPercent(data.value) }})
-                  </span>
-                </template>
-              </el-cascader>
-              <div class="special-cadres" :style="{ visibility: calDimension.boss_fight ? 'visible' : 'hidden' }">
                 <el-text
                   class="mx-1"
                   size="large"
