@@ -87,7 +87,7 @@ const calscore = (index: number) => {
     calDimensions.value[i] = dimension
     last_score = dimension.score
   }
-  totalScore.value = last_score * base.value
+  totalScore.value = last_score
 }
 
 const addDimension = (index: number) => {
