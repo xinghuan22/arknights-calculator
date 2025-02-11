@@ -113,7 +113,8 @@
 
 @media (prefers-color-scheme: light) {
   .sami-cal {
-    background-color: aliceblue;
+    /* background-color: aliceblue; */
+    background-color: transparent;
     color: rgb(96, 98, 102);
   }
 
@@ -135,22 +136,17 @@
     margin-top: 5%;
     width: 1200px;
     margin: 0 auto;
-    /* .sami {
-      flex: 3;
-    }
-
-    .cal-item {
-      flex: 7;
-    } */
   }
 
   .sami {
     width: 1200px;
     height: calc(1200px / 1560px * 500px);
+    /* 如果需要，可以为图片容器添加背景色 */
+    background-color: transparent;
   }
 
   .cal-item {
-    /* align-items: stretch; */
+    background-color: aliceblue; /* 只给内容区添加背景色 */
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -159,6 +155,8 @@
     }
     width: 100%;
     margin: 0 auto;
+    border-radius: 8px; /* 可选：添加圆角 */
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 可选：添加阴影 */
   }
 
   .item-box {
@@ -268,8 +266,8 @@
 }
 
 .reset-button {
-  width: 15%;
-  height: 100%;
+  width: 15% !important;
+  height: 100% !important;
 }
 
 .special-cadres {
