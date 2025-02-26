@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 @media (prefers-color-scheme: dark) {
   .mizuki-cal {
     background-color: rgb(36, 36, 40);

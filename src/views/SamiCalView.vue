@@ -33,6 +33,7 @@
                 :key="calDimension.id"
                 :options="behaviors"
                 :props="props"
+                class="cascader"
                 @change="handleChange(index)"
               />
               <div
@@ -95,7 +96,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 @media (prefers-color-scheme: dark) {
   .sami-cal {
     background-color: rgb(36, 36, 40);
@@ -168,12 +169,15 @@
   .dimension {
     display: flex;
     flex-direction: row;
-    .el-cascader {
+    .cascader {
       flex: 6;
     }
     .option {
       flex: 1;
       text-align: right;
+    }
+    .special-cadres {
+      flex: 3;
     }
     margin-top: 3px;
     padding: 3px;
@@ -271,7 +275,6 @@
 }
 
 .special-cadres {
-  flex: 3;
   display: flex;
   flex-direction: row;
 }
@@ -287,7 +290,6 @@
 
 <script setup lang="ts">
 import { useDark } from '@vueuse/core'
-import { ref } from 'vue'
 import {
   behaviors,
   handleChange,
@@ -331,14 +333,14 @@ const info = (msg: string, title: string) => {
   })
 }
 
-function toPercent(point: number) {
-  if (point > 1) {
-    return point
-  }
-  var str = Number(point * 100).toFixed()
-  str += '%'
-  return str
-}
+// function toPercent(point: number) {
+//   if (point > 1) {
+//     return point
+//   }
+//   var str = Number(point * 100).toFixed()
+//   str += '%'
+//   return str
+// }
 
 const digit_rule = `1. 每位选手开局拥有100分初始分数
 2. 当选手在比赛过程中，于第四层以前遇到或获得密文板【爱恋】时，必须选择【二三四连打】的结局走向，否则在分数结算时扣除四分之一的最终分数
@@ -422,8 +424,6 @@ const limit_rule = `1. 杯赛地图选定为【萨米N10】
 10. 在一轮次结束后，【操作选手】与【运营选手】的身份互换，再进行一次赛事，最终分数将取决两次分数的平均分
 11. 错误抓取Ban位干员时，当前轮次的赛事将被强行结算，并以最终分数的70%计算结果
 `
-
-const value = ref([])
 
 const props = {
   expandTrigger: 'hover' as const
