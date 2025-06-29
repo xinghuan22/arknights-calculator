@@ -17,6 +17,11 @@ const router = createRouter({
       path: '/mizuki',
       name: 'mizuki',
       component: () => import('../views/MizukiCalView.vue')
+    },
+    {
+      path: '/readme',
+      name: 'readme',
+      component: () => import('../views/ReadmeView.vue')
     }
   ]
 })
