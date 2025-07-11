@@ -31,7 +31,7 @@ const activeMenu = computed(() => route.path)
           <el-radio-button :value="false">expand</el-radio-button>
           <el-radio-button :value="true">collapse</el-radio-button>
         </el-radio-group>
-        <el-menu default-active="/readme" class="el-menu-vertical-demo" :collapse="isCollapse">
+        <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" :collapse="isCollapse">
           <el-sub-menu index="1">
             <template #title>
               <CalculatorOutlined />

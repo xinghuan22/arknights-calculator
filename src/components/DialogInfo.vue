@@ -72,11 +72,13 @@ const reset = () => {
 }
 
 .reset {
-  margin-right: 1%;
+  margin-right: 2%;
   width: 30%;
   flex: 5;
-  text-align: right;
+  display: flex;
   align-items: center;
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .reset-button {
@@ -86,6 +88,5 @@ const reset = () => {
 
 .score {
   margin-right: 3%;
-  height: inherit;
 }
 </style>

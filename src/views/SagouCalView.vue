@@ -13,12 +13,33 @@
     <div class="cal-item">
       <div v-for="calDimension in calDimensions" :key="calDimension.name" class="item-box">
         <div v-for="dimension in calDimension.dimensions" :key="dimension.name" class="dimension">
-          <h3 v-if="dimension.name !== '游戏结算'">{{ dimension.name }}: {{ score(dimension) }}</h3>
-          <div v-else>
+          <h3 v-if="title(dimension)">{{ dimension.name }}: {{ score(dimension) }}</h3>
+          <div v-if="dimension.name == '游戏结算'">
             <h3>
               {{ dimension.name }}
               <el-input-number class="number" v-model="dimension.score" />
               得分：{{ dimension.score }}
+            </h3>
+          </div>
+          <div
+            v-if="dimension.name == '相遇选择'"
+            style="min-height: 0; flex: 1 1 0; height: 100%; display: flex; flex-direction: column"
+          >
+            <h3 style="display: flex; align-items: center; flex: 1 1 0">
+              {{ dimension.name }}
+              <el-radio-group
+                v-model="dimension.checkbox.value"
+                text-color="#1a237e"
+                fill="#91caff"
+                style="margin-left: auto; justify-content: flex-end; margin-right: 1%"
+              >
+                <el-radio-button
+                  v-for="item in dimension.checkbox?.items"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.value"
+                />
+              </el-radio-group>
             </h3>
           </div>
           <div v-for="numItem in dimension.numItems" :key="numItem.id" class="slider-demo-block">
@@ -33,14 +54,33 @@
               :max="10"
             />
           </div>
-          <div v-for="boolItem in dimension.boolItems" :key="boolItem.id" class="slider-demo-block">
-            <el-checkbox v-model="boolItem.value" :label="boolItem.name" class="score" />
-            <span class="score">({{ boolItem.score }})</span>
+          <div
+            v-for="(boolItem, index) in dimension.boolItems"
+            :key="index"
+            class="slider-demo-block"
+          >
+            <el-checkbox-group
+              v-for="(item, i) in boolItem"
+              :key="item.id + '_' + i"
+              text-color="#1a237e"
+              fill="#91caff"
+              class="box"
+              v-model="item.value"
+            >
+              <el-checkbox-button
+                :key="item.id + '_' + i + '_' + index"
+                value="true"
+                class="checkboxbutton"
+                :disabled="i != 0 && boolItem[0].value.length == 0"
+              >
+                {{ item.name }}
+              </el-checkbox-button>
+            </el-checkbox-group>
           </div>
         </div>
-        <div v-if="calDimension.name === 'td'" class="reset">
+        <!-- <div v-if="calDimension.name === 'td'" class="reset">
           <el-button @click="reset()">重置</el-button>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- <el-row>
@@ -63,11 +103,17 @@
   }
 
   .dimension {
-    border: 1px solid whitesmoke;
+    /* border: 1px solid black; */
+    box-shadow: 0 0 3px 2px rgba(51, 60, 64, 0.1);
+  }
+
+  .dimension:hover {
+    box-shadow: 0 0 5px 4px rgba(209, 224, 231, 0.3);
   }
 
   h3 {
     color: white;
+    color: rgb(135, 132, 140);
   }
 }
 
@@ -78,11 +124,35 @@
   }
 
   .dimension {
-    border: 1px solid black;
+    /* border: 1px solid black; */
+    box-shadow: 0 0 3px 2px rgba(75, 127, 152, 0.1);
+  }
+
+  .dimension:hover {
+    box-shadow: 0 0 5px 4px rgba(75, 127, 152, 0.3);
   }
 
   h3 {
     color: black;
+  }
+
+  :deep(.checkboxbutton) {
+    /* border: 2px solid rgba(255, 255, 255, 0); */
+    border-left: 1px solid aliceblue;
+  }
+  :deep(.checkboxbutton > span) {
+    /* border: 2px solid rgba(255, 255, 255, 0); */
+    background-color: aliceblue;
+  }
+  /* 选中时显示边框 */
+  :deep(.checkboxbutton.is-disabled > span) {
+    /* border: 2px solid aliceblue; */
+    background-color: aliceblue !important;
+    opacity: 1 !important;
+  }
+  :deep(.checkboxbutton.is-checked) {
+    /* border: 2px solid aliceblue; */
+    border-left: 1px solid aliceblue;
   }
 }
 
@@ -108,15 +178,17 @@
     justify-content: center;
     flex-direction: row;
     .item-box {
-      flex: 1;
+      flex: 1 1 0;
     }
     width: 100%;
+    height: 520px;
   }
 
   .item-box {
     padding: 5px;
     display: flex;
     flex-direction: column;
+    height: 100%;
   }
 
   .dimension {
@@ -124,6 +196,8 @@
     flex-direction: column;
     margin-top: 3px;
     padding: 3px;
+    flex: 1 1 0;
+    height: 100%;
   }
 }
 
@@ -131,7 +205,35 @@
   display: flex;
   align-items: center;
   flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: nowrap; /* 保证一行内展示 */
+  overflow: hidden; /* 超出部分隐藏 */
 }
+.box {
+  flex: 1;
+  text-align: center;
+  width: 100%;
+  display: flex;
+}
+
+.checkboxbutton {
+  flex: 1 1 0;
+  width: 100% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 让内部 span 撑满 */
+:deep(.checkboxbutton > span) {
+  flex: 1 1 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .el-slider {
   width: 65%;
   margin-left: auto;
@@ -185,8 +287,7 @@ import { computed, reactive, ref } from 'vue'
 
 import { useDark } from '@vueuse/core'
 
-
-import  DialogInfo  from '../components/DialogInfo.vue'
+import DialogInfo from '../components/DialogInfo.vue'
 
 const isDark = useDark()
 
@@ -220,37 +321,31 @@ const limit_rule = `1. 杯赛地图选定为【萨卡兹N13】
 9.	禁用藏品：罗德之门，生还者合约
 `
 
+const MEET_SICHOU = 0
+const MEET_MEIYUAN = 1
+const MEET_TUYA = 2
+
 var scoresMap = {
   cadres: {
-    sixStar: 20,
-    fiveStar: 15,
-    fourStar: 10,
-    repeat: -200,
-    ban: -1000
+    sixStar: 30,
+    fiveStar: 10,
+    fourStar: 10
   },
   ends: {
-    twoEnds: 150,
-    xiuchui: 80,
-    mubei: 120,
-    qishi: 220,
-    qishiwulou: 280,
-    dadi: 170,
-    dadiwulou: 230,
-    shuiyue: 200,
-    shuiyuewulou: 260
+    gundong: 10,
+    shouke: 10,
+    chaoye: 30,
+    shengcheng: 30,
+    shoufa: 40,
+    tutu: 50,
+    tingzhi: 30,
+    hunluan1: 20,
+    hunluan2: 40,
+    wulou: 20
   },
   fights: {
-    chaoxue: 50,
-    zhanqianguhou: 50,
-    haomeng: 50,
-    lingdiyishi: 50,
-    chongyuzhixu: 50,
-    shouliechang: 50,
-    jixiezhizai: 50,
-    yujinfangzhen: 50,
-    shendurenzhi: 60,
-    shuihuoxiangrong: 100,
-    shikong: 100
+    normal: 10,
+    serious: 20
   },
   collection: {
     everything: 20
@@ -290,144 +385,235 @@ var cadres = {
   }
 }
 
+const gundong = () => {
+  return {
+    id: 'gundong',
+    name: '持有滚动先祖',
+    value: [],
+    score: scoresMap.ends.gundong
+  }
+}
+
+const hunluan1 = () => {
+  return {
+    id: 'hunluan1',
+    name: '混乱',
+    value: [],
+    score: scoresMap.ends.hunluan1
+  }
+}
+const hunluan2 = () => {
+  return {
+    id: 'hunluan2',
+    name: '混乱',
+    value: [],
+    score: scoresMap.ends.hunluan2
+  }
+}
+
+const wulou = () => {
+  return {
+    id: 'wulou',
+    name: '无漏',
+    value: [],
+    score: scoresMap.ends.wulou
+  }
+}
+
+const tingzhi = () => {
+  return {
+    id: 'tingzhi',
+    name: '持有思绪：停止',
+    value: [],
+    score: scoresMap.ends.tingzhi
+  }
+}
+
 var calTree = reactive({
+  Pattern: {
+    name: '相遇选择',
+    boolItems: [],
+    numItems: [],
+    checkbox: {
+      value: 0,
+      items: [
+        {
+          id: 'die',
+          name: '死仇',
+          value: MEET_SICHOU
+        },
+        {
+          id: 'mei',
+          name: '美愿',
+          value: MEET_MEIYUAN
+        },
+        {
+          id: 'zhen',
+          name: '涂鸦',
+          value: MEET_TUYA
+        }
+      ]
+    },
+    score: 0
+  },
   Cadre: {
     name: '临时招募得分',
     boolItems: [],
     numItems: [cadres.sixStar, cadres.fiveStar, cadres.fourStar],
+    checkbox: { value: 0, items: [] },
     score: 0
   },
   Ends: {
     name: '结局得分',
     boolItems: [
-      {
-        id: 'twoEnds',
-        name: '双结局',
-        value: false,
-        score: scoresMap.ends.twoEnds
-      },
-      {
-        id: 'qishi',
-        name: '“命运的宠儿”',
-        value: false,
-        score: scoresMap.ends.qishi
-      },
-      {
-        id: 'qishiwulou',
-        name: '“命运的宠儿”无漏',
-        value: false,
-        score: scoresMap.ends.qishiwulou
-      },
-      {
-        id: 'dadi',
-        name: '大群所向',
-        value: false,
-        score: scoresMap.ends.dadi
-      },
-      {
-        id: 'dadiwulou',
-        name: '大群所向无漏',
-        value: false,
-        score: scoresMap.ends.dadiwulou
-      },
-      {
-        id: 'shuiyue',
-        name: '人之光辉',
-        value: false,
-        score: scoresMap.ends.shuiyue
-      },
-      {
-        id: 'shuiyuewulou',
-        name: '人之光辉无漏',
-        value: false,
-        score: scoresMap.ends.shuiyuewulou
-      }
+      [
+        {
+          id: 'shouke',
+          name: '紧急授课/思维矫正',
+          value: [],
+          score: scoresMap.ends.shouke
+        },
+        gundong(),
+        hunluan1(),
+        wulou()
+      ],
+      [
+        {
+          id: 'chaoye',
+          name: '朝谒/魂灵朝谒',
+          value: [],
+          score: scoresMap.ends.chaoye
+        },
+        gundong(),
+        hunluan1(),
+        wulou()
+      ],
+      [
+        {
+          id: 'shengcheng',
+          name: '圣城',
+          value: [],
+          score: scoresMap.ends.shengcheng
+        },
+        hunluan1(),
+        wulou()
+      ],
+      [
+        {
+          id: 'shoufa',
+          name: '授法',
+          value: [],
+          score: scoresMap.ends.shoufa
+        },
+        hunluan2(),
+        wulou()
+      ],
+      [
+        {
+          id: 'tutu',
+          name: '不容拒绝',
+          value: [],
+          score: scoresMap.ends.tutu
+        },
+        tingzhi(),
+        hunluan2(),
+        wulou()
+      ]
     ],
     numItems: [],
+    checkbox: { value: 0, items: [] },
     score: 0
   },
   Fights: {
-    name: '紧急作战得分',
+    name: '作战得分',
     boolItems: [],
     numItems: [
       {
-        id: 'chaoxue',
-        name: '紧急巢穴',
+        id: 'shenchuguimo',
+        name: '神出鬼没',
         value: 0,
         max: 10,
-        score: scoresMap.fights.chaoxue
+        score: scoresMap.fights.normal
       },
       {
-        id: 'zhanqianguhou',
-        name: '紧急瞻前顾后',
+        id: 'shenchuguimojinji',
+        name: '紧急神出鬼没',
         value: 0,
         max: 10,
-        score: scoresMap.fights.zhanqianguhou
+        score: scoresMap.fights.serious
       },
       {
-        id: 'haomeng',
-        name: '紧急好梦在何方',
+        id: 'hundun',
+        name: '混沌',
         value: 0,
         max: 10,
-        score: scoresMap.fights.haomeng
+        score: scoresMap.fights.normal
       },
       {
-        id: 'lingdiyishi',
-        name: '紧急领地意识',
+        id: 'hundunjinji',
+        name: '紧急混沌',
         value: 0,
         max: 10,
-        score: scoresMap.fights.lingdiyishi
+        score: scoresMap.fights.serious
       },
       {
-        id: 'chongyuzhixu',
-        name: '紧急铳与秩序',
+        id: 'laiyinweishi',
+        name: '莱茵卫士',
         value: 0,
         max: 10,
-        score: scoresMap.fights.chongyuzhixu
+        score: scoresMap.fights.normal
       },
       {
-        id: 'shouliechang',
-        name: '紧急狩猎场',
+        id: 'laiyinweishijinji',
+        name: '紧急莱茵卫士',
         value: 0,
         max: 10,
-        score: scoresMap.fights.shouliechang
+        score: scoresMap.fights.serious
       },
       {
-        id: 'jixiezhizai',
-        name: '紧急机械之灾',
+        id: 'jianzhi',
+        name: '建制',
         value: 0,
         max: 10,
-        score: scoresMap.fights.jixiezhizai
+        score: scoresMap.fights.normal
       },
       {
-        id: 'yujinfangzhen',
-        name: '紧急余烬方阵',
+        id: 'jianzhijinji',
+        name: '紧急建制',
         value: 0,
         max: 10,
-        score: scoresMap.fights.yujinfangzhen
+        score: scoresMap.fights.serious
       },
       {
-        id: 'shendurenzhi',
-        name: '紧急深度认知',
+        id: 'dongtianfudi',
+        name: '洞天福地',
         value: 0,
         max: 10,
-        score: scoresMap.fights.shendurenzhi
+        score: scoresMap.fights.normal
       },
       {
-        id: 'shuihuoxiangrong',
-        name: '紧急水火相容',
+        id: 'dongtianfudijinji',
+        name: '紧急洞天福地',
         value: 0,
         max: 10,
-        score: scoresMap.fights.shuihuoxiangrong
+        score: scoresMap.fights.serious
       },
       {
-        id: 'shikong',
-        name: '紧急失控',
+        id: 'waidao',
+        name: '外道',
         value: 0,
         max: 10,
-        score: scoresMap.fights.shikong
+        score: scoresMap.fights.normal
+      },
+      {
+        id: 'waidaojinji',
+        name: '紧急外道',
+        value: 0,
+        max: 10,
+        score: scoresMap.fights.serious
       }
     ],
+    checkbox: { value: 0, items: [] },
     score: 0
   },
   Collection: {
@@ -442,6 +628,7 @@ var calTree = reactive({
         score: scoresMap.collection.everything
       }
     ],
+    checkbox: { value: 0, items: [] },
     score: 0
   },
   Hide: {
@@ -468,42 +655,42 @@ var calTree = reactive({
         value: 0,
         max: 10,
         score: scoresMap.hide.ya
+      },
+      {
+        id: 'ya',
+        name: '鼠',
+        value: 0,
+        max: 10,
+        score: scoresMap.hide.ya
       }
     ],
+    checkbox: { value: 0, items: [] },
     score: 0
   },
   Special: {
     name: '特殊作战得分',
     boolItems: [
-      {
-        id: 'xiuchui',
-        name: '荒地群猎',
-        value: false,
-        score: scoresMap.ends.xiuchui
-      },
-      {
-        id: 'hanzai',
-        name: '寒灾之咒',
-        value: false,
-        score: scoresMap.ends.xiuchui
-      },
-      {
-        id: 'mubei',
-        name: '险路勿近',
-        value: false,
-        score: scoresMap.ends.mubei
-      }
+      [
+        {
+          id: 'xiuchui',
+          name: '荒地群猎',
+          value: false,
+          score: scoresMap.ends.chaoye
+        }
+      ]
     ],
     numItems: [],
+    checkbox: { value: 0, items: [] },
     score: 0
   },
-  
+
   Game: {
     name: '游戏结算',
     boolItems: [],
     numItems: [],
+    checkbox: { value: 0, items: [] },
     score: 0
-  },
+  }
 })
 
 const firstCalDimension = {
@@ -513,7 +700,7 @@ const firstCalDimension = {
 
 const secondCalDimension = {
   name: 'sd',
-  dimensions: [calTree.Special, calTree.Fights]
+  dimensions: [calTree.Pattern, calTree.Fights]
 }
 
 const thirdCalDimension = {
@@ -525,11 +712,39 @@ const calDimensions = ref([firstCalDimension, secondCalDimension, thirdCalDimens
 
 const dimensionScore = (item: any) => {
   var score = 0
-  item.boolItems.forEach((boolItem: any) => {
-    if (boolItem.value) {
-      score += boolItem.score
+  item.boolItems.forEach((boolItem: any[]) => {
+    for (const item of boolItem) {
+      if (item.value.length > 0) {
+        score += item.score
+      }
     }
   })
+  if (item.name == '结局得分') {
+    if (item.boolItems[4][1].value.length > 0 && item.boolItems[4][2].value.length > 0) {
+      score += 20 // 超大蛋混乱额外加20分
+    }
+    if (
+      (item.boolItems[0][0].value.length > 0 || item.boolItems[1][0].value.length > 0) &&
+      item.boolItems[2][0].value.length > 0 &&
+      item.boolItems[4][0].value.length > 0
+    ) {
+      score += 10 // 135或235连打额外加10分
+    }
+    if (
+      item.boolItems[0][0].value.length > 0 &&
+      item.boolItems[3][0].value.length > 0 &&
+      item.boolItems[4][0].value.length > 0
+    ) {
+      score += 20 // 145额外加20分
+    }
+    if (
+      item.boolItems[1][0].value.length > 0 &&
+      item.boolItems[3][0].value.length > 0 &&
+      item.boolItems[4][0].value.length > 0
+    ) {
+      score += 30 // 245连打额外加30分
+    }
+  }
   item.numItems.forEach((numItem: any) => {
     score += numItem.value * numItem.score
   })
@@ -569,5 +784,9 @@ function reset() {
       numItem.value = 0
     })
   }
+}
+
+const title = (dimension: any) => {
+  return dimension.name !== '游戏结算' && dimension.name !== '相遇选择'
 }
 </script>
