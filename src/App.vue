@@ -4,9 +4,9 @@ import { computed, ref } from 'vue'
 import { CalculatorOutlined, InfoCircleOutlined } from '@ant-design/icons-vue'
 
 const isCollapse = ref(false)
-const handleCollapse = () => {
-  isCollapse.value = !isCollapse.value
-}
+// const handleCollapse = () => {
+//   isCollapse.value = !isCollapse.value
+// }
 const route = useRoute()
 const activeMenu = computed(() => route.path)
 </script>
@@ -31,12 +31,7 @@ const activeMenu = computed(() => route.path)
           <el-radio-button :value="false">expand</el-radio-button>
           <el-radio-button :value="true">collapse</el-radio-button>
         </el-radio-group>
-        <el-menu 
-        :default-active="activeMenu" 
-        class="el-menu-vertical-demo"
-        :collapse="isCollapse"
-        
-        >
+        <el-menu default-active="/readme" class="el-menu-vertical-demo" :collapse="isCollapse">
           <el-sub-menu index="1">
             <template #title>
               <CalculatorOutlined />
@@ -45,13 +40,14 @@ const activeMenu = computed(() => route.path)
             <!-- <el-menu-item index="1-1">
             <RouterLink to="/" class="nav-item">首页</RouterLink>
           </el-menu-item> -->
-            <RouterLink to="/sami_naotan" class="nav-item">
-              <el-menu-item index="/sami_naotan" style="font-size: medium"
-                >闹谭杯计算器</el-menu-item
-              >
-            </RouterLink>
             <RouterLink to="/mizuki" class="nav-item">
-              <el-menu-item index="/mizuki" style="font-size: medium"> Mizuki </el-menu-item>
+              <el-menu-item index="/mizuki" style="font-size: medium"> 骑士杯 </el-menu-item>
+            </RouterLink>
+            <RouterLink to="/sami_naotan" class="nav-item">
+              <el-menu-item index="/sami_naotan" style="font-size: medium">闹谭杯</el-menu-item>
+            </RouterLink>
+            <RouterLink to="/sagou" class="nav-item">
+              <el-menu-item index="/sagou" style="font-size: medium">萨构杯2</el-menu-item>
             </RouterLink>
           </el-sub-menu>
           <RouterLink to="/readme" class="nav-item">
