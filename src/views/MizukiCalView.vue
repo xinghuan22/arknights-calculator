@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 @media (prefers-color-scheme: dark) {
   .mizuki-cal {
     background-color: rgb(36, 36, 40);
@@ -79,9 +79,9 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    padding-top: 60px; /* 添加上边距，与header高度相同 */
     width: 1200px;
     margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   .mizuki {

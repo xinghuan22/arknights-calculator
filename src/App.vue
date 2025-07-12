@@ -1,68 +1,87 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import { ref } from 'vue'
+import { RouterView, useRoute, RouterLink } from 'vue-router'
+import { computed, ref } from 'vue'
+import { CalculatorOutlined, InfoCircleOutlined } from '@ant-design/icons-vue'
 
-const isCollapse = ref(false)
+import { DArrowRight, DArrowLeft} from '@element-plus/icons-vue'
+
+const isCollapse = ref(true)
 const handleCollapse = () => {
   isCollapse.value = !isCollapse.value
 }
+const route = useRoute()
+const activeMenu = computed(() => route.path)
+
+const menu_style = computed(() => {
+  return isCollapse.value ? DArrowRight : DArrowLeft
+})
 </script>
 
 <template>
   <div class="app">
-  <!-- 头部标题栏 -->
-  <el-row>
-    <el-col :span="24">
-      <header class="header">
-        <div class="logo">明日方舟工具箱</div>
-        <div class="header-right">
-          <!-- 预留位置放置其他组件 -->
-        </div>
-      </header>
-    </el-col>
-  </el-row>
-  <el-row class="tac">
-    <el-col :span="4">
-      <h5 class="mb-2">Default colors</h5>
-      <el-menu default-active="2" class="el-menu-vertical-demo">
-        <el-sub-menu index="1">
-          <template #title>
-            <el-icon><location /></el-icon>
-            <span>Navigator One</span>
-          </template>
-          <el-menu-item index="1-1">
+    <!-- 头部标题栏 -->
+    <el-row>
+      <el-col :span="24">
+        <header class="header">
+          <el-button :icon="menu_style" @click="handleCollapse" class="menu-button" circle />
+          <div class="logo">kissnab的明日方舟工具箱</div>
+          <div class="header-right">
+            <!-- 预留位置放置其他组件 -->
+          </div>
+        </header>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4" class="tac">
+        <!-- <h5 class="mb-2">Default colors</h5> -->
+        <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" :collapse="isCollapse">
+          <el-sub-menu index="1">
+            <template #title>
+              <el-icon><CalculatorOutlined /></el-icon>
+              <span style="font-size: medium;">集成战略计算器</span>
+            </template>
+            <!-- <el-menu-item index="1-1">
             <RouterLink to="/" class="nav-item">首页</RouterLink>
-          </el-menu-item>
-          <el-menu-item index="1-2">
-            <RouterLink to="/sami_naotan" class="nav-item">闹谭杯计算器</RouterLink>
-          </el-menu-item>
-          <el-menu-item index="1-3">
-            <RouterLink to="/mizuki" class="nav-item">Mizuki</RouterLink>
-          </el-menu-item>
-        </el-sub-menu>
-        <el-menu-item index="2">
-          <el-icon><icon-menu /></el-icon>
-          <span>Navigator Two</span>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
+          </el-menu-item> -->
+            <RouterLink to="/mizuki" class="nav-item">
+              <el-menu-item index="/mizuki" style="font-size: medium"> 骑士杯 </el-menu-item>
+            </RouterLink>
+            <RouterLink to="/sami_naotan" class="nav-item">
+              <el-menu-item index="/sami_naotan" style="font-size: medium">闹谭杯</el-menu-item>
+            </RouterLink>
+            <RouterLink to="/sagou" class="nav-item">
+              <el-menu-item index="/sagou" style="font-size: medium">萨构杯2</el-menu-item>
+            </RouterLink>
+          </el-sub-menu>
+          <RouterLink to="/readme" class="nav-item">
+            <el-menu-item index="/readme" style="font-size: medium">
+              <el-icon><InfoCircleOutlined /></el-icon>
+              <template #title>使用说明</template>
+            </el-menu-item>
+          </RouterLink>
+          <!-- <el-menu-item index="3" disabled>
           <el-icon><document /></el-icon>
           <span>Navigator Three</span>
         </el-menu-item>
         <el-menu-item index="4">
           <el-icon><setting /></el-icon>
           <span>Navigator Four</span>
-        </el-menu-item>
-      </el-menu>
-    </el-col>
-    <el-col :span="20">
+        </el-menu-item> -->
+        </el-menu>
+      </el-col>
+      <el-col :span="20" class="content">
         <RouterView />
-    </el-col>
-  </el-row>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <style scoped>
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
   height: 60px;
   background-color: #24292e;
   color: white;
@@ -80,17 +99,46 @@ const handleCollapse = () => {
 }
 
 .app {
-  width: 100vw;  /* 使用视窗宽度 */
-  min-height: 100vh;  /* 最小高度为视窗高度 */
+  width: 100vw; /* 使用视窗宽度 */
+  min-height: 100vh; /* 最小高度为视窗高度 */
 }
 
 .nav-item {
-  color: #333;
+  display: inline-block;
   width: 100%;
+  height: 100%;
+  /* line-height: inherit; */
+  color: inherit;
+  font-size: 25px;
 }
 
-/* RouterLink hover时的样式 */
 .nav-item:hover {
-  background-color: transparent !important;
+  background-color: inherit;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  min-height: 100vh; /* 保证高度足够撑满视口 */
+  box-sizing: border-box;
+  padding-top: 40px;
+}
+
+.tac {
+  padding-top: 60px;
+}
+
+.menu-button {
+  margin-right: 10px;
+  background-color: #24292e;
+  color: white;
+  border: none;
+}
+
+.menu-button:hover {
+  background-color: #434445;
+  color: white;
 }
 </style>

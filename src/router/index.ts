@@ -9,14 +9,23 @@ const router = createRouter({
       component: () => import('../views/SamiCalView.vue')
     },
     {
-      path: '/',
-      name: 'home',
-      component: () => import('../views/HomeView.vue')
-    },
-    {
       path: '/mizuki',
       name: 'mizuki',
       component: () => import('../views/MizukiCalView.vue')
+    },
+    {
+      path: '/readme',
+      name: 'readme',
+      component: () => import('../views/ReadmeView.vue')
+    },
+    {
+      path: '/sagou',
+      name: 'sagou',
+      component: () => import('../views/SagouCalView.vue')
+    },
+    {
+      path: '/',
+      redirect: '/readme'
     }
   ]
 })
