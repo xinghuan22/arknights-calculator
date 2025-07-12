@@ -28,7 +28,7 @@
             <h3 style="display: flex; align-items: center; flex: 1 1 0">
               {{ dimension.name }}
               <el-radio-group
-                v-model="dimension.checkbox.value"
+                v-model="meet_select"
                 text-color="#1a237e"
                 fill="#91caff"
                 style="margin-left: auto; justify-content: flex-end; margin-right: 1%"
@@ -44,38 +44,67 @@
           </div>
           <div v-for="numItem in dimension.numItems" :key="numItem.id" class="slider-demo-block">
             <span class="score">{{ numItem.name }}</span>
-            <span class="score">({{ numItem.score }})</span>
-            <el-slider v-if="numItem.max == 100" v-model="numItem.value" show-input />
+            <span v-if="numItem.score > 1" class="score">({{ numItem.score }})</span>
+            <el-slider
+              v-if="numItem.max == 100"
+              v-model="numItem.value"
+              :min="0"
+              :max="numItem.max"
+              show-input
+            />
             <el-input-number
               v-else
               v-model="numItem.value"
               class="right-number"
               :min="0"
-              :max="10"
+              :max="numItem.max"
             />
           </div>
-          <div
-            v-for="(boolItem, index) in dimension.boolItems"
-            :key="index"
-            class="slider-demo-block"
-          >
-            <el-checkbox-group
-              v-for="(item, i) in boolItem"
-              :key="item.id + '_' + i"
-              text-color="#1a237e"
-              fill="#91caff"
-              class="box"
-              v-model="item.value"
+          <div v-if="dimension.name == '结局得分'">
+            <div
+              v-for="(boolItem, index) in dimension.boolItems"
+              :key="index"
+              class="slider-demo-block"
             >
-              <el-checkbox-button
-                :key="item.id + '_' + i + '_' + index"
-                value="true"
-                class="checkboxbutton"
-                :disabled="i != 0 && boolItem[0].value.length == 0"
+              <el-checkbox-group
+                v-for="(item, i) in boolItem"
+                :key="item.id + '_' + i"
+                text-color="#1a237e"
+                fill="#91caff"
+                class="box"
+                v-model="item.value"
+              >
+                <el-checkbox-button
+                  :key="item.id + '_' + i + '_' + index"
+                  value="true"
+                  class="checkboxbutton"
+                  :disabled="i != 0 && boolItem[0].value.length == 0"
+                >
+                  {{ item.name }}
+                </el-checkbox-button>
+              </el-checkbox-group>
+            </div>
+          </div>
+          <div v-if="dimension.name !== '结局得分'">
+            <div v-for="(boolItem, index) in dimension.boolItems" :key="index">
+              <el-checkbox
+                v-for="(item, i) in boolItem"
+                :key="item.id + '_' + i"
+                v-model="item.bool_value"
+                class="slider-demo-block score"
               >
                 {{ item.name }}
-              </el-checkbox-button>
-            </el-checkbox-group>
+              </el-checkbox>
+            </div>
+          </div>
+          <div v-for="(item, index) in dimension.selectItem" :key="index" class="slider-demo-block">
+            <span class="score">{{ item.name }}:</span>
+            <el-select-v2
+              v-model="item.value"
+              placeholder="Please select"
+              class="right-number"
+              :options="item.items.map((i) => ({ label: i, value: i }))"
+            />
           </div>
         </div>
         <!-- <div v-if="calDimension.name === 'td'" class="reset">
@@ -181,7 +210,7 @@
       flex: 1 1 0;
     }
     width: 100%;
-    height: 520px;
+    height: 450px;
   }
 
   .item-box {
@@ -325,6 +354,8 @@ const MEET_SICHOU = 0
 const MEET_MEIYUAN = 1
 const MEET_TUYA = 2
 
+var meet_select = ref(-1)
+
 var scoresMap = {
   cadres: {
     sixStar: 30,
@@ -348,13 +379,17 @@ var scoresMap = {
     serious: 20
   },
   collection: {
-    everything: 20
+    everything: 0,
+    gongmen: -50
   },
   hide: {
     ya: 10
   },
-  team: {
-    ban: -1000
+  special: {
+    gouxiang: 0.1,
+    quqian: -5,
+    weishidaier: -0.1,
+    shenrenfendui: 0.1
   },
   game: {
     score: 0
@@ -390,6 +425,7 @@ const gundong = () => {
     id: 'gundong',
     name: '持有滚动先祖',
     value: [],
+    bool_value: false,
     score: scoresMap.ends.gundong
   }
 }
@@ -399,6 +435,7 @@ const hunluan1 = () => {
     id: 'hunluan1',
     name: '混乱',
     value: [],
+    bool_value: false,
     score: scoresMap.ends.hunluan1
   }
 }
@@ -407,6 +444,7 @@ const hunluan2 = () => {
     id: 'hunluan2',
     name: '混乱',
     value: [],
+    bool_value: false,
     score: scoresMap.ends.hunluan2
   }
 }
@@ -416,6 +454,7 @@ const wulou = () => {
     id: 'wulou',
     name: '无漏',
     value: [],
+    bool_value: false,
     score: scoresMap.ends.wulou
   }
 }
@@ -425,6 +464,7 @@ const tingzhi = () => {
     id: 'tingzhi',
     name: '持有思绪：停止',
     value: [],
+    bool_value: false,
     score: scoresMap.ends.tingzhi
   }
 }
@@ -435,7 +475,7 @@ var calTree = reactive({
     boolItems: [],
     numItems: [],
     checkbox: {
-      value: 0,
+      value: -1,
       items: [
         {
           id: 'die',
@@ -451,9 +491,15 @@ var calTree = reactive({
           id: 'zhen',
           name: '涂鸦',
           value: MEET_TUYA
+        },
+        {
+          id: 'all',
+          name: '无相遇',
+          value: -1
         }
       ]
     },
+    selectItem: [],
     score: 0
   },
   Cadre: {
@@ -461,6 +507,7 @@ var calTree = reactive({
     boolItems: [],
     numItems: [cadres.sixStar, cadres.fiveStar, cadres.fourStar],
     checkbox: { value: 0, items: [] },
+    selectItem: [],
     score: 0
   },
   Ends: {
@@ -471,6 +518,7 @@ var calTree = reactive({
           id: 'shouke',
           name: '紧急授课/思维矫正',
           value: [],
+          bool_value: false,
           score: scoresMap.ends.shouke
         },
         gundong(),
@@ -482,6 +530,7 @@ var calTree = reactive({
           id: 'chaoye',
           name: '朝谒/魂灵朝谒',
           value: [],
+          bool_value: false,
           score: scoresMap.ends.chaoye
         },
         gundong(),
@@ -493,6 +542,7 @@ var calTree = reactive({
           id: 'shengcheng',
           name: '圣城',
           value: [],
+          bool_value: false,
           score: scoresMap.ends.shengcheng
         },
         hunluan1(),
@@ -503,6 +553,7 @@ var calTree = reactive({
           id: 'shoufa',
           name: '授法',
           value: [],
+          bool_value: false,
           score: scoresMap.ends.shoufa
         },
         hunluan2(),
@@ -513,6 +564,7 @@ var calTree = reactive({
           id: 'tutu',
           name: '不容拒绝',
           value: [],
+          bool_value: false,
           score: scoresMap.ends.tutu
         },
         tingzhi(),
@@ -522,6 +574,7 @@ var calTree = reactive({
     ],
     numItems: [],
     checkbox: { value: 0, items: [] },
+    selectItem: [],
     score: 0
   },
   Fights: {
@@ -614,11 +667,22 @@ var calTree = reactive({
       }
     ],
     checkbox: { value: 0, items: [] },
+    selectItem: [],
     score: 0
   },
   Collection: {
     name: '藏品得分',
-    boolItems: [],
+    boolItems: [
+      [
+        {
+          id: 'gongmen',
+          name: '错误使用拱门与呼救',
+          value: [],
+          bool_value: false,
+          score: scoresMap.collection.gongmen
+        }
+      ]
+    ],
     numItems: [
       {
         id: 'collection',
@@ -629,6 +693,7 @@ var calTree = reactive({
       }
     ],
     checkbox: { value: 0, items: [] },
+    selectItem: [],
     score: 0
   },
   Hide: {
@@ -665,47 +730,78 @@ var calTree = reactive({
       }
     ],
     checkbox: { value: 0, items: [] },
+    selectItem: [],
     score: 0
   },
   Special: {
-    name: '特殊作战得分',
+    name: '特殊得分',
     boolItems: [
       [
         {
-          id: 'xiuchui',
-          name: '荒地群猎',
-          value: false,
-          score: scoresMap.ends.chaoye
+          id: 'shenrenfendui',
+          name: '神人分队系数补正',
+          value: [],
+          bool_value: false,
+          score: scoresMap.special.shenrenfendui
+        },
+        {
+          id: 'gouxiang',
+          name: '构想少于20时，顺利通关',
+          value: [],
+          bool_value: false,
+          score: scoresMap.special.gouxiang
+        },
+        {
+          id: 'linzhao',
+          name: '抓取临召维什戴尔',
+          value: [],
+          bool_value: false,
+          score: scoresMap.special.weishidaier
         }
       ]
     ],
-    numItems: [],
+    numItems: [
+      {
+        id: 'quqian',
+        name: '取钱数量（团队）',
+        value: 0,
+        max: 150,
+        score: 0
+      },
+      {
+        id: 'jiesuan',
+        name: '结算分数',
+        value: 0,
+        max: 3000,
+        score: 1
+      }
+    ],
     checkbox: { value: 0, items: [] },
-    score: 0
-  },
-
-  Game: {
-    name: '游戏结算',
-    boolItems: [],
-    numItems: [],
-    checkbox: { value: 0, items: [] },
+    selectItem: [
+      {
+        id: 'jiemuxiaoguo',
+        name: '节目效果系数',
+        value: 1,
+        items: [1, 1.05, 1.1]
+      }
+    ],
     score: 0
   }
 })
 
 const firstCalDimension = {
   name: 'fd',
-  dimensions: [calTree.Cadre, calTree.Ends, calTree.Hide]
+  dimensions: [calTree.Pattern, calTree.Cadre, calTree.Hide,calTree.Collection]
 }
 
 const secondCalDimension = {
   name: 'sd',
-  dimensions: [calTree.Pattern, calTree.Fights]
+  dimensions: [calTree.Fights]
 }
 
 const thirdCalDimension = {
   name: 'td',
-  dimensions: [calTree.Collection, calTree.Game]
+  dimensions: [calTree.Ends,  calTree.Special]
 }
 
 const calDimensions = ref([firstCalDimension, secondCalDimension, thirdCalDimension])
@@ -715,6 +811,9 @@ const dimensionScore = (item: any) => {
   item.boolItems.forEach((boolItem: any[]) => {
     for (const item of boolItem) {
       if (item.value.length > 0) {
+        score += item.score
+      }
+      if (item.bool_value && (item.score > 1 || item.score < -1)) {
         score += item.score
       }
     }
@@ -745,23 +844,42 @@ const dimensionScore = (item: any) => {
       score += 30 // 245连打额外加30分
     }
   }
+  if (item.name == '藏品得分') {
+    if (meet_select.value == MEET_SICHOU && item.numItems[0].value > 55) {
+      score -= 15 * (item.numItems[0].value - 55) // 死仇
+    } else if (meet_select.value == MEET_MEIYUAN && item.numItems[0].value > 35) {
+      score -= 15 * (item.numItems[0].value - 35) // 美愿
+    } else if (meet_select.value == MEET_TUYA) {
+      // 涂鸦不限制藏品
+    }
+  }
   item.numItems.forEach((numItem: any) => {
     score += numItem.value * numItem.score
   })
+  if (item.name == '特殊得分' && item.numItems[0].value > 100) {
+    score -= 5 * (item.numItems[0].value - 100)
+  }
   item.score = score
   return score
 }
 
 const totalScore = () => {
-  return (
+  var score =
     calTree.Cadre.score +
     calTree.Ends.score +
     calTree.Collection.score +
     calTree.Hide.score +
     calTree.Special.score +
-    calTree.Fights.score +
-    calTree.Game.score
-  )
+    calTree.Fights.score
+  calTree.Special.boolItems.forEach((boolItem: any[]) => {
+    for (const item of boolItem) {
+      if (item.bool_value && item.score > -1 && item.score < 1) {
+        score *= 1 + item.score
+      }
+    }
+  })
+  score *= calTree.Special.selectItem[0].value
+  return score
 }
 
 const score = computed(() => (item: any) => {
@@ -777,13 +895,21 @@ function reset() {
     console.log(cal[key]) // 报错消失
     // do something
     cal[key].score = 0
+    cal[key].checkbox.value = -1
     cal[key].boolItems.forEach((boolItem: any) => {
-      boolItem.value = false
+      for (const item of boolItem) {
+        item.value = []
+        item.bool_value = false
+      }
     })
     cal[key].numItems.forEach((numItem: any) => {
       numItem.value = 0
     })
+    cal[key].selectItem.forEach((selectItem: any) => {
+      selectItem.value = 1
+    })
   }
+  meet_select.value = -1
 }
 
 const title = (dimension: any) => {
