@@ -3,12 +3,18 @@ import { RouterView, useRoute, RouterLink } from 'vue-router'
 import { computed, ref } from 'vue'
 import { CalculatorOutlined, InfoCircleOutlined } from '@ant-design/icons-vue'
 
-const isCollapse = ref(false)
-// const handleCollapse = () => {
-//   isCollapse.value = !isCollapse.value
-// }
+import { DArrowRight, DArrowLeft} from '@element-plus/icons-vue'
+
+const isCollapse = ref(true)
+const handleCollapse = () => {
+  isCollapse.value = !isCollapse.value
+}
 const route = useRoute()
 const activeMenu = computed(() => route.path)
+
+const menu_style = computed(() => {
+  return isCollapse.value ? DArrowRight : DArrowLeft
+})
 </script>
 
 <template>
@@ -17,6 +23,7 @@ const activeMenu = computed(() => route.path)
     <el-row>
       <el-col :span="24">
         <header class="header">
+          <el-button :icon="menu_style" @click="handleCollapse" class="menu-button" circle />
           <div class="logo">kissnab的明日方舟工具箱</div>
           <div class="header-right">
             <!-- 预留位置放置其他组件 -->
@@ -27,15 +34,11 @@ const activeMenu = computed(() => route.path)
     <el-row>
       <el-col :span="4" class="tac">
         <!-- <h5 class="mb-2">Default colors</h5> -->
-        <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-          <el-radio-button :value="false">expand</el-radio-button>
-          <el-radio-button :value="true">collapse</el-radio-button>
-        </el-radio-group>
         <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" :collapse="isCollapse">
           <el-sub-menu index="1">
             <template #title>
-              <CalculatorOutlined />
-              <span style="font-size: medium; margin-left: 10px">集成战略计算器</span>
+              <el-icon><CalculatorOutlined /></el-icon>
+              <span style="font-size: medium;">集成战略计算器</span>
             </template>
             <!-- <el-menu-item index="1-1">
             <RouterLink to="/" class="nav-item">首页</RouterLink>
@@ -52,7 +55,8 @@ const activeMenu = computed(() => route.path)
           </el-sub-menu>
           <RouterLink to="/readme" class="nav-item">
             <el-menu-item index="/readme" style="font-size: medium">
-              <InfoCircleOutlined style="margin-right: 5px" /> 网站说明
+              <el-icon><InfoCircleOutlined /></el-icon>
+              <template #title>使用说明</template>
             </el-menu-item>
           </RouterLink>
           <!-- <el-menu-item index="3" disabled>
@@ -124,5 +128,17 @@ const activeMenu = computed(() => route.path)
 
 .tac {
   padding-top: 60px;
+}
+
+.menu-button {
+  margin-right: 10px;
+  background-color: #24292e;
+  color: white;
+  border: none;
+}
+
+.menu-button:hover {
+  background-color: #434445;
+  color: white;
 }
 </style>

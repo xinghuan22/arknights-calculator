@@ -22,6 +22,10 @@ const router = createRouter({
       path: '/sagou',
       name: 'sagou',
       component: () => import('../views/SagouCalView.vue')
+    },
+    {
+      path: '/',
+      redirect: '/readme'
     }
   ]
 })
