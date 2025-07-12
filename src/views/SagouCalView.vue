@@ -72,6 +72,7 @@
                 text-color="#1a237e"
                 fill="#91caff"
                 class="box"
+                @change="checkboxChange(boolItem, i)"
                 v-model="item.value"
               >
                 <el-checkbox-button
@@ -910,6 +911,14 @@ function reset() {
     })
   }
   meet_select.value = -1
+}
+
+const checkboxChange = (boolItem: any[], index: number) => {
+  if (index == 0 && boolItem[0].value.length == 0) {
+    boolItem.forEach((item: any) => {
+        item.value = []
+    })
+  }
 }
 
 const title = (dimension: any) => {
