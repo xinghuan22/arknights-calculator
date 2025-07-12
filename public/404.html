@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <title>页面未找到 - Arknights Calculator</title>
+    <meta http-equiv="refresh" content="0;url=/arknights-calculator/readme" />
+    <script>
+      // 如果是通过 JS 访问，优先用 JS 跳转，兼容 history 路由
+      var path = location.pathname.replace(/^\/arknights-calculator/, '');
+      if (path && path !== '/' && path !== '/readme') {
+        location.replace('/arknights-calculator/readme');
+      }
+    </script>
+    <style>
+      body {
+        font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+        background: #f0f8ff;
+        color: #333;
+        text-align: center;
+        padding-top: 10%;
+      }
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 0.5em;
+      }
+      a {
+        color: #409eff;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>404 - 页面未找到</h1>
+    <p>即将跳转到 <a href="/arknights-calculator/readme">首页说明</a> ...</p>
+    <script>
+      setTimeout(function () {
+        location.replace('/arknights-calculator/readme');
+      }, 1000);
+    </script>
+  </body>
+</html>
