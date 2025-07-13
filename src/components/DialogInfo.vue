@@ -34,6 +34,7 @@ const digit_info = () => openDialog('digit')
 const limit_info = () => openDialog('limit')
 const reset = () => props.reset()
 
+const isMobile = ref(window.innerWidth <= 768)
 // 响应式监听窗口变化（可选，体验更好）
 window.addEventListener('resize', () => {
   if (window.innerWidth > 768) fabOpen.value = false
@@ -54,15 +55,12 @@ window.addEventListener('resize', () => {
   <el-dialog
     v-model="dialogVisible"
     :title="dialogTitle"
-    width="90vw"
     align-center
     :close-on-click-modal="true"
+    :width="isMobile ? '90vw' : '40vw'"
     class="mobile-dialog"
   >
-    <div
-      v-html="dialogContent"
-      style="text-align: center; font-size: 1.1em; line-height: 1.8"
-    ></div>
+    <div v-html="dialogContent" style="font-size: 1.1em; line-height: 1.6"></div>
   </el-dialog>
   <div class="result">
     <div class="info">
@@ -101,7 +99,7 @@ window.addEventListener('resize', () => {
     height: 100%;
   }
 }
-.result.info{
+.result.info {
   margin-left: 5px;
 }
 .reset {
