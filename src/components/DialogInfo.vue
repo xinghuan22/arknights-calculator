@@ -68,7 +68,7 @@ window.addEventListener('resize', () => {
       <el-button class="info" plain @click="digit_info">分数性规则</el-button>
       <el-button class="info" plain @click="limit_info">限制性规则</el-button>
     </div>
-    <div class="reset mobile-reset">
+    <div class="score-reset">
       <el-text class="mx-1 score" size="large">最终得分: {{ totalScore.toFixed(2) }}</el-text>
       <el-button class="reset-button" type="primary" @click="reset">重置</el-button>
     </div>
@@ -102,7 +102,7 @@ window.addEventListener('resize', () => {
 .result.info {
   margin-left: 5px;
 }
-.reset {
+.score-reset {
   margin-right: 2%;
   width: 30%;
   flex: 5;
@@ -122,9 +122,6 @@ window.addEventListener('resize', () => {
 .mobile-dialog {
   z-index: 4000;
 }
-.mobile-reset {
-  justify-content: center;
-}
 @media (min-width: 769px) {
   .fab,
   .fab-btn,
@@ -142,25 +139,38 @@ window.addEventListener('resize', () => {
     border-radius: 8px;
   }
 }
+/* 移动端适配 */
 @media (max-width: 768px) {
   .result {
-    flex-direction: column !important;
+    flex-direction: column;
     align-items: stretch;
+    gap: 15px;
+  }
+  
+  .info-buttons {
     width: 100%;
-    display: flex !important;
-  }
-  .info {
-    width: 100% !important;
-    /* margin: 0 0 8px 0; */
-    display: flex;
     justify-content: center;
   }
-  .reset,
-  .mobile-reset {
-    width: 100% !important;
-    margin: 8px 0 8px 0;
-    justify-content: center;
-    display: flex;
+  
+  .score-reset {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .info-btn {
+    min-width: 30%;
+    font-size: 0.9rem;
+    padding: 8px 5px;
+  }
+  
+  .reset-btn {
+    min-width: 70px;
+  }
+  
+  .score-display {
+    font-size: 1rem;
   }
 }
+
 </style>
