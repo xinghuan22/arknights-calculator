@@ -26,6 +26,10 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/readme'
+    },
+    {
+      path: '/:catchAll(.*)',
+      redirect: '/'
     }
   ]
 })

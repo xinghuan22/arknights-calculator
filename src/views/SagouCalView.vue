@@ -231,6 +231,7 @@
   }
 }
 
+
 .slider-demo-block {
   display: flex;
   align-items: center;

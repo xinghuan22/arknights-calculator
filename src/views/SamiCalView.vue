@@ -4,18 +4,14 @@
       <el-image :src="getbg()" />
     </div>
     <div class="cal-item">
-      <div class="result">
-        <el-button class="info" plain @click="useinfo">使用说明</el-button>
-        <el-button class="info" plain @click="digit_info">分数性规则</el-button>
-        <el-button class="info" plain @click="limit_info">限制性规则</el-button>
-        <div class="reset">
-          <el-text class="mx-1 score" size="large"
-            >最终得分: {{ (totalScore * base).toFixed(2) }}</el-text
-          >
-          <el-button class="reset-button" type="primary" @click="reset">重置</el-button>
-        </div>
-      </div>
-      <el-scrollbar height="60vh" class="item-box">
+      <DialogInfo
+        :totalScore="totalScore * base"
+        :digit_rule="digit_rule"
+        :limit_rule="limit_rule"
+        :readme="'本计算器是专用于闹谭杯的计算器，只计算分数性规则，不考虑无分数的限制性规则。'"
+        :reset="reset" 
+      />
+      <el-scrollbar style="min-height:0" class="item-box">
         <!-- <p v-for="item in 20" :key="item" class="scrollbar-demo-item">{{ item }}</p> -->
         <TransitionGroup
           name="list"
@@ -134,9 +130,10 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin-top: 5%;
+    /* margin-top: 5%; */
     width: 1200px;
     margin: 0 auto;
+    height: 100vh;
   }
 
   .sami {
@@ -158,6 +155,7 @@
     margin: 0 auto;
     border-radius: 8px; /* 可选：添加圆角 */
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 可选：添加阴影 */
+    height: 100%;
   }
 
   .item-box {
@@ -181,6 +179,55 @@
     }
     margin-top: 3px;
     padding: 3px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sami-cal {
+    align-items: center;
+    display: flex;
+    /* justify-content: center; */
+    flex-direction: column;
+    /* margin-top: 5%; */
+    width: 100%;
+    height: 100vh;
+  }
+
+  .sami {
+    width: 100%;
+    height: calc(100vw / 1560px * 500px);
+    /* 如果需要，可以为图片容器添加背景色 */
+    background-color: transparent;
+  }
+
+  .cal-item {
+    background-color: aliceblue; /* 只给内容区添加背景色 */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 8px; /* 可选：添加圆角 */
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 可选：添加阴影 */
+    height: 100%;
+  }
+
+  .item-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dimension {
+    display: flex;
+    flex-direction: column; /* 在小屏幕上改为垂直布局 */
+    .cascader {
+      width: auto; /* 自动宽度 */
+      margin-bottom: 10px; /* 添加底部间距 */
+    }
+    .option {
+      text-align: right;
+      margin-bottom: 10px; /* 添加底部间距 */
+    }
   }
 }
 
@@ -247,6 +294,7 @@
   height: auto;
   display: flex;
   flex-direction: row;
+  justify-content: center;
 }
 
 .info {
@@ -255,7 +303,7 @@
   margin-top: auto;
   flex: 1;
   width: 10%;
-  height: 10%;
+  height: 100%;
   .el-button {
     width: 70%;
     height: 100%;
@@ -267,6 +315,8 @@
   width: 30%;
   flex: 5;
   text-align: right;
+  justify-content: flex-end;
+  display: flex;
 }
 
 .reset-button {
@@ -281,6 +331,9 @@
 
 .score {
   margin-right: 20%;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .option {
@@ -305,32 +358,12 @@ import {
 
 import { ElMessageBox } from 'element-plus'
 
+import DialogInfo from '@/components/DialogInfo.vue'
+
 const isDark = useDark()
 
 function getbg() {
   return new URL('../assets/bg_sami.png', import.meta.url).href
-}
-
-const useinfo = () => {
-  info('本计算器是专用于闹谭杯的计算器，只计算分数性规则，不考虑无分数的限制性规则。', '使用说明')
-}
-const digit_info = () => {
-  info(digit_rule, '分数性规则')
-}
-const limit_info = () => {
-  info(limit_rule, '限制性规则')
-}
-
-const info = (msg: string, title: string) => {
-  ElMessageBox.alert(msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;'), title, {
-    // if you want to disable its autofocus
-    // autofocus: false,
-    dangerouslyUseHTMLString: true,
-    confirmButtonText: 'OK',
-    customStyle: {
-      'max-width': '40%'
-    }
-  })
 }
 
 // function toPercent(point: number) {
