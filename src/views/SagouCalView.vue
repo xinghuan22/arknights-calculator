@@ -378,7 +378,7 @@ var scoresMap = {
   },
   fights: {
     normal: 10,
-    serious: 20
+    serious: 15
   },
   collection: {
     everything: 0,
