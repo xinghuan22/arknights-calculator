@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AppMenu: typeof import('./src/components/AppMenu.vue')['default']
     DialogInfo: typeof import('./src/components/DialogInfo.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCascader: typeof import('element-plus/es')['ElCascader']
@@ -14,6 +15,8 @@ declare module 'vue' {
     ElCheckboxButton: typeof import('element-plus/es')['ElCheckboxButton']
     ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
     ElCol: typeof import('element-plus/es')['ElCol']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    'ElIc<InfoCircleOutlined': typeof import('element-plus/es')['ElIc<InfoCircleOutlined']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
@@ -37,9 +40,14 @@ declare module 'vue' {
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
+    Menu: typeof import('./src/components/Menu.vue')['default']
+    MenuComp: typeof import('./src/components/MenuComp.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
+    VanButton: typeof import('vant/es')['Button']
+    VanFloatingBubble: typeof import('vant/es')['FloatingBubble']
+    VanPopover: typeof import('vant/es')['Popover']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
 }

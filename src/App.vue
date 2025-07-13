@@ -1,20 +1,32 @@
 <script setup lang="ts">
-import { RouterView, useRoute, RouterLink } from 'vue-router'
+import { RouterView } from 'vue-router'
 import { computed, ref } from 'vue'
-import { CalculatorOutlined, InfoCircleOutlined } from '@ant-design/icons-vue'
+import { DArrowRight, DArrowLeft } from '@element-plus/icons-vue'
+import { ElDrawer } from 'element-plus'
 
-import { DArrowRight, DArrowLeft} from '@element-plus/icons-vue'
+import AppMenu from './components/AppMenu.vue'
 
-const isCollapse = ref(true)
-const handleCollapse = () => {
-  isCollapse.value = !isCollapse.value
-}
-const route = useRoute()
-const activeMenu = computed(() => route.path)
+const isCollapse = ref(false)
+const drawerVisible = ref(false)
 
 const menu_style = computed(() => {
   return isCollapse.value ? DArrowRight : DArrowLeft
 })
+
+// 判断是否为移动端
+const isMobile = computed(() => window.innerWidth <= 768)
+// window.addEventListener('resize', () => {
+//   isMobile.value = window.innerWidth <= 768
+// })
+
+// 菜单点击后关闭 Drawer
+function handleMenuClick(path: string) {
+  drawerVisible.value = false
+}
+
+function handleCollapse() {
+  isCollapse.value = !isCollapse.value
+}
 </script>
 
 <template>
@@ -23,52 +35,36 @@ const menu_style = computed(() => {
     <el-row>
       <el-col :span="24">
         <header class="header">
-          <el-button :icon="menu_style" @click="handleCollapse" class="menu-button" circle />
+          <!-- 手机端显示菜单按钮 -->
+          <el-button
+            v-if="isMobile"
+            icon="Menu"
+            @click="drawerVisible = true"
+            class="menu-button"
+            circle
+          />
+          <!-- PC端显示折叠按钮 -->
+          <el-button v-else :icon="menu_style" @click="handleCollapse" class="menu-button" circle />
           <div class="logo">kissnab的明日方舟工具箱</div>
-          <div class="header-right">
-            <!-- 预留位置放置其他组件 -->
-          </div>
+          <div class="header-right"></div>
         </header>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4" class="tac">
-        <!-- <h5 class="mb-2">Default colors</h5> -->
-        <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" :collapse="isCollapse">
-          <el-sub-menu index="1">
-            <template #title>
-              <el-icon><CalculatorOutlined /></el-icon>
-              <span style="font-size: medium;">集成战略计算器</span>
-            </template>
-            <!-- <el-menu-item index="1-1">
-            <RouterLink to="/" class="nav-item">首页</RouterLink>
-          </el-menu-item> -->
-            <RouterLink to="/mizuki" class="nav-item">
-              <el-menu-item index="/mizuki" style="font-size: medium"> 骑士杯 </el-menu-item>
-            </RouterLink>
-            <RouterLink to="/sami_naotan" class="nav-item">
-              <el-menu-item index="/sami_naotan" style="font-size: medium">闹谭杯</el-menu-item>
-            </RouterLink>
-            <RouterLink to="/sagou" class="nav-item">
-              <el-menu-item index="/sagou" style="font-size: medium">萨构杯2</el-menu-item>
-            </RouterLink>
-          </el-sub-menu>
-          <RouterLink to="/readme" class="nav-item">
-            <el-menu-item index="/readme" style="font-size: medium">
-              <el-icon><InfoCircleOutlined /></el-icon>
-              <template #title>使用说明</template>
-            </el-menu-item>
-          </RouterLink>
-          <!-- <el-menu-item index="3" disabled>
-          <el-icon><document /></el-icon>
-          <span>Navigator Three</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <el-icon><setting /></el-icon>
-          <span>Navigator Four</span>
-        </el-menu-item> -->
-        </el-menu>
+      <!-- PC端侧边栏 -->
+      <el-col :span="4" class="tac" v-if="!isMobile">
+        <AppMenu :is-collapse="isCollapse" />
       </el-col>
+      <!-- 手机端 Drawer 菜单 -->
+      <el-drawer
+        v-model="drawerVisible"
+        direction="ltr"
+        size="70%"
+        :with-header="false"
+        class="mobile-drawer"
+      >
+        <AppMenu :is-collapse="isCollapse" @menu-click="handleMenuClick" />
+      </el-drawer>
       <el-col :span="20" class="content">
         <RouterView />
       </el-col>
@@ -104,26 +100,28 @@ const menu_style = computed(() => {
 }
 
 .nav-item {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  /* line-height: inherit; */
+  /* display: inline-block; */
+  /* width: 100%;
+  height: 100%; */
+  line-height: inherit;
   color: inherit;
-  font-size: 25px;
+  /* font-size: 25px; */
 }
 
 .nav-item:hover {
   background-color: inherit;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  min-height: 100vh; /* 保证高度足够撑满视口 */
-  box-sizing: border-box;
-  padding-top: 40px;
+@media (min-width: 1024px) {
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
+    /* margin-top: 60px; */
+  }
 }
 
 .tac {
@@ -140,5 +138,40 @@ const menu_style = computed(() => {
 .menu-button:hover {
   background-color: #434445;
   color: white;
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 48px;
+    padding: 0 10px;
+    font-size: 1em;
+  }
+  .app {
+    width: 100vw;
+    min-height: 100vh;
+  }
+  .el-row {
+    flex-direction: column !important;
+  }
+  .el-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+  }
+  .tac {
+    display: none;
+  }
+  .mobile-drawer {
+    z-index: 2000;
+  }
+  .nav-item {
+    font-size: 18px;
+    padding: 8px 0;
+  }
+  .content {
+    margin-top: 48px;
+    box-sizing: border-box;
+    min-height: calc(100vh - 48px);
+  }
 }
 </style>
