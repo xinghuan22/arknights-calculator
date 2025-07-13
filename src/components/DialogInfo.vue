@@ -57,7 +57,7 @@ window.addEventListener('resize', () => {
     :title="dialogTitle"
     align-center
     :close-on-click-modal="true"
-    :width="isMobile ? '90vw' : '40vw'"
+    :width="isMobile ? '90vw' : '655px'"
     class="mobile-dialog"
   >
     <div v-html="dialogContent" style="font-size: 1.1em; line-height: 1.6"></div>
@@ -131,6 +131,15 @@ window.addEventListener('resize', () => {
   .mobile-dialog,
   .mobile-reset {
     display: none !important;
+  }
+  .mobile-dialog {
+    font-size: 1.1em;
+    line-height: 2;
+    letter-spacing: 0.02em;
+    padding: 18px 8px;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 8px;
   }
 }
 @media (max-width: 768px) {
