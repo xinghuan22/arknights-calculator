@@ -878,7 +878,7 @@ const dimensionScore = (item: any) => {
       score -= 15 * (item.numItems[0].value - 55) // 死仇
     } else if (meet_select.value == MEET_MEIYUAN && item.numItems[0].value > 35) {
       score -= 15 * (item.numItems[0].value - 35) // 美愿
-    } else if (meet_select.value == MEET_TUYA || meet_select.value == -1) {
+    } else if ((meet_select.value == MEET_TUYA || meet_select.value == -1) && item.numItems[0].value > 65) {
       // 涂鸦限制65藏品
       score -= 15 * (item.numItems[0].value - 65)
     }
