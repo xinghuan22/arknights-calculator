@@ -68,7 +68,7 @@ window.addEventListener('resize', () => {
       <el-button class="info" plain @click="digit_info">分数性规则</el-button>
       <el-button class="info" plain @click="limit_info">限制性规则</el-button>
     </div>
-    <div class="reset">
+    <div class="reset mobile-reset">
       <el-text class="mx-1 score" size="large">最终得分: {{ totalScore.toFixed(2) }}</el-text>
       <el-button class="reset-button" type="primary" @click="reset">重置</el-button>
     </div>
