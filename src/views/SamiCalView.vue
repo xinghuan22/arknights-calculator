@@ -356,8 +356,6 @@ import {
   special_cadre_change
 } from '../scripts/samical'
 
-import { ElMessageBox } from 'element-plus'
-
 import DialogInfo from '@/components/DialogInfo.vue'
 
 const isDark = useDark()

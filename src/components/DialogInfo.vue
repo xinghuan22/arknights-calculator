@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   totalScore: number
@@ -9,7 +9,6 @@ const props = defineProps<{
   reset: () => void
 }>()
 
-const isMobile = computed(() => window.innerWidth <= 768)
 const fabOpen = ref(false)
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
