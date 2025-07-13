@@ -74,10 +74,6 @@ function handleCollapse() {
 
 <style scoped>
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
   height: 60px;
   background-color: #24292e;
   color: white;
@@ -122,6 +118,22 @@ function handleCollapse() {
     box-sizing: border-box;
     /* margin-top: 60px; */
   }
+
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 900;
+    height: 60px;
+    background-color: #24292e;
+    color: white;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
 }
 
 .tac {
@@ -145,6 +157,11 @@ function handleCollapse() {
     height: 48px;
     padding: 0 10px;
     font-size: 1em;
+    top: env(safe-area-inset-top, 0);
+    left: 0px;
+    right: 0px;
+    position: fixed;
+    z-index: 999;
   }
   .app {
     width: 100vw;
